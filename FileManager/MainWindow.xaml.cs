@@ -32,7 +32,11 @@ namespace FileManager
 
 		private void LeftTree_Expanded(object sender, RoutedEventArgs e)
 		{
+			var item = e.OriginalSource as TreeViewItem;
+			if (item == null)
+				return;
 
+			item.Items.Filter = i => i is Folder;
 		}
 	}
 }

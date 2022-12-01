@@ -27,11 +27,14 @@
             <GridSplitter Grid.Column="5" ShowsPreview="False" Width="2" Background="LightGray" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
 
             <TreeView x:Name="LeftTree" Grid.Column="0" TreeView.SelectedItemChanged="LeftTree_SelectedItemChanged" TreeViewItem.Expanded="LeftTree_Expanded">
-                <TreeView.ItemTemplate>
-                    <HierarchicalDataTemplate DataType="{x:Type local:Folder}" ItemsSource="{Binding TreeView}">
-                        <TextBlock Text="{Binding Name}" />
+                <TreeView.Resources>
+                    <HierarchicalDataTemplate DataType="{x:Type local:Folder}" ItemsSource="{Binding Children}">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Image Source="\Images\folder.png" Width="18" Height="18" Margin="0 0 5 0"/>
+                            <TextBlock Text="{Binding Name}" />
+                        </StackPanel>
                     </HierarchicalDataTemplate>
-                </TreeView.ItemTemplate>
+                </TreeView.Resources>
             </TreeView>
 
             <DataGrid x:Name="LeftList" Grid.Column="2">
