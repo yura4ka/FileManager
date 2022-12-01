@@ -1,0 +1,50 @@
+﻿<Window x:Class="FileManager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FileManager"
+        mc:Ignorable="d"
+        Title="FileManager" Height="750" Width="1200">
+    <DockPanel LastChildFill="True">
+        <Menu DockPanel.Dock="Top" Height="20" VerticalAlignment="Top">
+            
+        </Menu>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.3*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="0.7*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="0.3*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="0.7*" />
+            </Grid.ColumnDefinitions>
+
+            <GridSplitter Grid.Column="1" ShowsPreview="False" Width="2" Background="LightGray" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
+            <GridSplitter Grid.Column="3" ShowsPreview="False" Width="2" Background="LightGray" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
+            <GridSplitter Grid.Column="5" ShowsPreview="False" Width="2" Background="LightGray" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
+
+            <TreeView x:Name="LeftTree" Grid.Column="0" TreeView.SelectedItemChanged="LeftTree_SelectedItemChanged" TreeViewItem.Expanded="LeftTree_Expanded">
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate DataType="{x:Type local:Folder}" ItemsSource="{Binding TreeView}">
+                        <TextBlock Text="{Binding Name}" />
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+            </TreeView>
+
+            <DataGrid x:Name="LeftList" Grid.Column="2">
+                
+            </DataGrid>
+
+            <TreeView x:Name="RightTree" Grid.Column="4">
+
+            </TreeView>
+
+            <DataGrid x:Name="RightList" Grid.Column="6">
+
+            </DataGrid>
+        </Grid>
+    </DockPanel>
+</Window>
