@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace FileManager
@@ -36,6 +33,8 @@ namespace FileManager
 
 		public void Add(Folder folder)
 		{
+			if (folder == _backFolders.Last?.Value)
+				return;
 			AddFolder(folder, _backFolders);
 			_forwardFolders.Clear();
 			SetButtons();

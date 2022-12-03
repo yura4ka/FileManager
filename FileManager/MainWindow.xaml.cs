@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -7,39 +8,41 @@ namespace FileManager
 	public partial class MainWindow : Window
 	{
 		private readonly FileSystem fs = new();
-		private readonly FolderHistory _leftHistory;
+		private readonly TabController _leftTab;
+		private readonly TabController _rigthTab;
 
 		public MainWindow()
 		{
 			InitializeComponent();
-			LeftTree.ItemsSource = fs.GetRoot();
-			_leftHistory = new(LeftBack, LeftForward);
+			var root = fs.GetRoot();
+			LeftTree.ItemsSource = root;
+			RightTree.ItemsSource = root;
+
+			_leftTab = new(LeftTree, LeftList, LeftStatus, LeftPath);
+			_rigthTab = new(RightTree, RightList, RightStatus, RightPath);
 		}
 
-		private static void SetPath(ListBox path, Folder folder)
+		private static void OnTreeItemClick(TabController tab)
 		{
-			path.Items.Clear();
-			foreach (var i in folder.GetFullPathItems())
-				path.Items.Add(i);
+			Folder selected = (Folder)tab.Tree.SelectedItem;
+			tab.SetListSourse(selected);
+			tab.SetPath(selected);
+			tab.History.Add(selected);
 		}
 
-		private static void SetListSourse(DataGrid list, TextBlock itemsCount, Folder folder)
+		private void LeftTreeItem_Click(object sender, MouseButtonEventArgs e)
 		{
-			folder.TryInitializeChildren();
-			list.ItemsSource = folder.Children;
-			itemsCount.Text = $"{folder.Children.Count} елементів";
-		}
-
-		private void TreeViewItem_MouseUp(object sender, MouseButtonEventArgs e)
-		{
-			Folder selected = (Folder)LeftTree.SelectedItem;
-			SetListSourse(LeftList, LeftItems, selected);
-			SetPath(LeftPath, selected);
-			_leftHistory.Add(selected);
+			OnTreeItemClick(_leftTab);
 			e.Handled = true;
 		}
 
-		private void LeftTree_Expanded(object sender, RoutedEventArgs e)
+		private void RightTreeItem_Click(object sender, MouseButtonEventArgs e)
+		{
+			OnTreeItemClick(_rigthTab);
+			e.Handled = true;
+		}
+
+		private void Tree_Expanded(object sender, RoutedEventArgs e)
 		{
 			if (e.OriginalSource is not TreeViewItem item)
 				return;
@@ -51,14 +54,34 @@ namespace FileManager
 			}
 		}
 
-		private void Item_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		private static void OnFolderDoubleClick(TabController tab, Folder folder)
 		{
-			if (((DataGridRow)sender).Item is not Folder folder)
-				return;
+			tab.SetListSourse(folder);
+			tab.History.Add(folder);
+			tab.Path.Items.Add(folder);
+		}
 
-			SetListSourse(LeftList, LeftItems, folder);
-			_leftHistory.Add(folder);
-			LeftPath.Items.Add(folder);
+		private void LeftItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			if (((DataGridRow)sender).Item is Folder folder)
+				OnFolderDoubleClick(_leftTab, folder);
+		}
+
+		private void RightItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			if (((DataGridRow)sender).Item is Folder folder)
+				OnFolderDoubleClick(_rigthTab, folder);
+		}
+
+		private static void OnPathClick(TabController tab, Folder folder)
+		{
+			tab.SetListSourse(folder);
+			tab.History.Add(folder);
+
+			var items = tab.Path.Items;
+			int i = items.Count - 1;
+			while (items[i] != folder)
+				items.RemoveAt(i--);
 		}
 
 		private void LeftPath_MouseUp(object sender, MouseButtonEventArgs e)
@@ -66,30 +89,31 @@ namespace FileManager
 			if (((ListBoxItem)sender).Content is not Folder folder)
 				return;
 
-			SetListSourse(LeftList, LeftItems, folder);
-			_leftHistory.Add(folder);
-
-			var items = LeftPath.Items;
-			int i = items.Count - 1;
-			while (items[i] != folder)
-				items.RemoveAt(i--);
-
+			OnPathClick(_leftTab, folder);
 			((ListBoxItem)sender).IsSelected = false;
 			e.Handled = true;
 		}
 
-		private void LeftBack_Click(object sender, RoutedEventArgs e)
+		private void RightPath_MouseUp(object sender, MouseButtonEventArgs e)
 		{
-			var folder = _leftHistory.Back();
-			SetListSourse(LeftList, LeftItems, folder);
-			SetPath(LeftPath, folder);
+			if (((ListBoxItem)sender).Content is not Folder folder)
+				return;
+
+			OnPathClick(_leftTab, folder);
+			((ListBoxItem)sender).IsSelected = false;
+			e.Handled = true;
 		}
 
-		private void LeftForward_Click(object sender, RoutedEventArgs e)
+		private void LeftList_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			var folder = _leftHistory.Forward();
-			SetListSourse(LeftList, LeftItems, folder);
-			SetPath(LeftPath, folder);
+			if (_leftTab.List.SelectedItems.Count != 0)
+				_rigthTab.List.UnselectAll();
+		}
+
+		private void RightList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (_rigthTab.List.SelectedItems.Count != 0)
+				_leftTab.List.UnselectAll();
 		}
 	}
 }
