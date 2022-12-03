@@ -6,9 +6,43 @@
         xmlns:local="clr-namespace:FileManager"
         mc:Ignorable="d"
         Title="FileManager" Height="750" Width="1200">
+
+    <Window.Resources>
+        <Style TargetType="Button" x:Key="PathButton">
+            <Setter Property="Padding" Value="5" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
+        <Style TargetType="TreeView">
+            <Setter Property="FontSize" Value="16" />
+        </Style>
+
+        <Style TargetType="DataGrid">
+            <Setter Property="IsReadOnly" Value="True" />
+            <Setter Property="HeadersVisibility" Value="Column" />
+            <Setter Property="AutoGenerateColumns" Value="False" />
+
+            <Setter Property="Background" Value="White" />
+            <Setter Property="GridLinesVisibility" Value="None" />
+            <Setter Property="FontSize" Value="16" />
+        </Style>
+
+        <Style TargetType="DataGridCell">
+            <Setter Property="MinHeight" Value="25" />
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="Background" Value="#c5e3fc" />
+                    <Setter Property="Foreground" Value="Black" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
     <DockPanel LastChildFill="True">
         <Menu DockPanel.Dock="Top" Height="20" VerticalAlignment="Top">
-            
+
         </Menu>
 
         <Grid>
@@ -22,32 +56,113 @@
                 <ColumnDefinition Width="0.7*" />
             </Grid.ColumnDefinitions>
 
-            <GridSplitter Grid.Column="1" ShowsPreview="False" Width="2" Background="LightGray" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
-            <GridSplitter Grid.Column="3" ShowsPreview="False" Width="2" Background="LightGray" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
-            <GridSplitter Grid.Column="5" ShowsPreview="False" Width="2" Background="LightGray" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-            <TreeView x:Name="LeftTree" Grid.Column="0" TreeView.SelectedItemChanged="LeftTree_SelectedItemChanged" TreeViewItem.Expanded="LeftTree_Expanded">
+            <GridSplitter Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" ShowsPreview="False" Width="2" Background="LightGray" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
+            <GridSplitter Grid.Column="3" Grid.RowSpan="3" ShowsPreview="False" Width="2" Background="LightGray" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
+            <GridSplitter Grid.Column="5" Grid.Row="1" Grid.RowSpan="2" ShowsPreview="False" Width="2" Background="LightGray" HorizontalAlignment="Center" VerticalAlignment="Stretch" />
+
+            <TreeView x:Name="LeftTree" Grid.Column="0" Grid.Row="1" TreeViewItem.Expanded="LeftTree_Expanded">
                 <TreeView.Resources>
-                    <HierarchicalDataTemplate DataType="{x:Type local:Folder}" ItemsSource="{Binding Children}">
+                    <Style TargetType="TreeViewItem">
+                        <EventSetter Event="MouseUp" Handler="TreeViewItem_MouseUp" />
+                    </Style>
+
+                    <HierarchicalDataTemplate DataType="{x:Type local:Folder}" ItemsSource="{Binding TreeView}">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Image Source="\Images\folder.png" Width="18" Height="18" Margin="0 0 5 0"/>
+                            <Image Source="{Binding Info.Image}" Width="18" Height="18" Margin="0 0 5 0"/>
                             <TextBlock Text="{Binding Name}" />
                         </StackPanel>
                     </HierarchicalDataTemplate>
                 </TreeView.Resources>
             </TreeView>
 
-            <DataGrid x:Name="LeftList" Grid.Column="2">
-                
+
+            <DataGrid x:Name="LeftList" Grid.Column="2" Grid.Row="1" ColumnWidth = "*">
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridRow">
+                        <EventSetter Event="MouseDoubleClick" Handler="Item_MouseDoubleClick" />
+                    </Style>
+                </DataGrid.Resources>
+
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Ім'я">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Image Source="{Binding Info.Image}" Width="18" Height="18" Margin="0 0 5 0"/>
+                                    <TextBlock Text="{Binding Info.Name}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Дата змінення" Binding="{Binding Info.DateModified}" />
+                    <DataGridTextColumn Header="Тип" Binding="{Binding Info.Type}" />
+                    <DataGridTextColumn Header="Розмір" Binding="{Binding Info.Size}" />
+                </DataGrid.Columns>
             </DataGrid>
 
-            <TreeView x:Name="RightTree" Grid.Column="4">
+            <StatusBar Grid.Row="2" Grid.ColumnSpan="3">
+                <StatusBarItem>
+                    <TextBlock x:Name="LeftItems">0 елементів</TextBlock>
+                </StatusBarItem>
+                <StatusBarItem>
+                    <TextBlock x:Name="LeftSelected"></TextBlock>
+                </StatusBarItem>
+            </StatusBar>
+
+            <TreeView x:Name="RightTree" Grid.Column="4" Grid.Row="1">
 
             </TreeView>
 
-            <DataGrid x:Name="RightList" Grid.Column="6">
+            <DataGrid x:Name="RightList" Grid.Column="6" Grid.Row="1">
 
             </DataGrid>
+
+            <StatusBar Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="3">
+                <StatusBarItem>
+                    <TextBlock x:Name="RightStatus">Right</TextBlock>
+                </StatusBarItem>
+            </StatusBar>
+
+            <WrapPanel Grid.Column="0" Grid.ColumnSpan="3">
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="LeftBack" Style="{StaticResource ResourceKey=PathButton}" IsEnabled="False" Click="LeftBack_Click">
+                        <Image Source="/Images/back.png" Width="20" Height="20" />
+                    </Button>
+                    <Button x:Name="LeftForward" Style="{StaticResource ResourceKey=PathButton}" IsEnabled="False" Click="LeftForward_Click">
+                        <Image Source="/Images/forward.png" Width="20" Height="20" />
+                    </Button>
+                </StackPanel>
+                <ListBox x:Name="LeftPath" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel IsItemsHost="True" />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="local:Folder">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Name}" />
+                                <TextBlock Text=">" Margin="5 0 0 0"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListBoxItem}">
+                            <Setter Property="Cursor" Value="Hand" />
+                            <Setter Property="Padding" Value="5" />
+                            <EventSetter Event="MouseUp" Handler="LeftPath_MouseUp"/>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </WrapPanel>
         </Grid>
     </DockPanel>
 </Window>

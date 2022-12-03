@@ -1,21 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace FileManager
 {
-	abstract public class FsItem
+	abstract class FsItem
 	{
-		protected Folder? _parent = null;
-		public string Name { get; protected set; }
+		protected Folder? _parent;
+		public FileData Info { get; protected set; }
 		public string FullName { get; protected set; }
+		public string Name { get => Info.Name; protected set => Info.Name = value; }
 
-		public FsItem(string name, Folder? parent = null)
+		public FsItem(FileData data, Folder? parent = null)
 		{
-			Name = name;
-			FullName = parent?.FullName + name;
+			Info = data;
+			FullName = parent == null ? Name : Path.GetFullPath(parent?.FullName + "/" + Name);
 			_parent = parent;
 		}
 	}

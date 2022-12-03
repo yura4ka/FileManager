@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FileManager
+﻿namespace FileManager
 {
 	class File : FsItem
 	{
-		public File(string name, Folder? parent = null) : base(name, parent) {}
+		public File(FileData data, Folder? parent = null) : base(data, parent) {}
 
 	}
 }

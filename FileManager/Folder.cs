@@ -1,21 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FileManager
 {
-	public class Folder : FsItem
+	class Folder : FsItem
 	{
 		private bool _isChildrenInitialized = false;
 
-		public List<FsItem> Children { get; protected set; }
+		public ObservableCollection<FsItem> Children { get; protected set; }
 		public FsItem[] TreeView => Children.Where(i => i is Folder).ToArray();
 
-		public Folder(string name, Folder? parent = null, bool isFillFolder = false) : base(name, parent) 
+		public Folder(FileData data, Folder? parent = null, bool isFillFolder = false) : base(data, parent) 
 		{
 			Children = new();
 
@@ -32,12 +29,35 @@ namespace FileManager
 				if (info.Attributes.HasFlag(FileAttributes.Hidden)) 
 					continue;
 				if (info.Attributes.HasFlag(FileAttributes.Directory))
-					Children.Add(new Folder(info.Name, this));
+					Children.Add(new Folder(new FileData(info), this));
 				else
-					Children.Add(new File(info.Name, this));
+					Children.Add(new File(new FileData(info), this));
 
 			}
 			_isChildrenInitialized = true;
+		}
+
+		public bool TryInitializeChildren()
+		{
+			if (_isChildrenInitialized) 
+				return false;
+			InitializeChildren();
+			return true;
+		}
+
+		public List<Folder> GetFullPathItems()
+		{
+			var result = new List<Folder>() { this };
+			var currentparrent = _parent;
+
+			while (currentparrent != null)
+			{
+				result.Add(currentparrent);
+				currentparrent = currentparrent._parent;
+			}
+
+			result.Reverse();
+			return result;
 		}
 	}
 }
