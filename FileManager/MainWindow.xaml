@@ -8,6 +8,30 @@
         Title="FileManager" Height="750" Width="1200">
 
     <Window.Resources>
+        <Style TargetType="Button" x:Key="ToolBarItem">
+            <Setter Property="IsEnabled" Value="False" />
+            <Setter Property="Background" Value="#f5f6f7" />
+            <Setter Property="Padding" Value="5" />
+            <Setter Property="Margin" Value="0 5 5 5" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="BorderThickness" Value="0" />
+
+            <Style.Resources>
+                <Style TargetType="StackPanel">
+                    <Style.Resources>
+                        <Style TargetType="Image">
+                            <Setter Property="Margin" Value="0 5" />
+                            <Setter Property="Height" Value="25" />
+                            <Setter Property="Width" Value="25" />
+                        </Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontSize" Value="14" />
+                        </Style>
+                    </Style.Resources>
+                </Style>
+            </Style.Resources>
+        </Style>
+        
         <Style TargetType="Button" x:Key="PathButton">
             <Setter Property="Padding" Value="5" />
             <Setter Property="BorderThickness" Value="0" />
@@ -44,6 +68,39 @@
         <Menu DockPanel.Dock="Top" Height="20" VerticalAlignment="Top">
 
         </Menu>
+
+        <StackPanel x:Name="ToolBar" DockPanel.Dock="Top" Orientation="Horizontal" Background="#f5f6f7" Margin="0 0 0 10">
+            <Button x:Name="MoveButton" Style="{StaticResource ToolBarItem}" Click="MoveButton_Click">
+                <StackPanel>
+                    <Image Source="/Images/move.png" />
+                    <TextBlock>Перемістити</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button x:Name="CopyButton" Style="{StaticResource ToolBarItem}" Click="CopyButton_Click">
+                <StackPanel>
+                    <Image Source="/Images/copy.png" />
+                    <TextBlock>Копіювати</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button x:Name="PasteButton" Style="{StaticResource ToolBarItem}" Click="PasteButton_Click">
+                <StackPanel>
+                    <Image Source="/Images/paste.png" />
+                    <TextBlock>Вставити</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button x:Name="RemoveButton" Style="{StaticResource ToolBarItem}" Click="RemoveButton_Click">
+                <StackPanel>
+                    <Image Source="/Images/remove.png" />
+                    <TextBlock>Видалити</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button x:Name="RenameButton" Style="{StaticResource ToolBarItem}" Click="RenameButton_Click">
+                <StackPanel>
+                    <Image Source="/Images/rename.png" />
+                    <TextBlock>Перейменувати</TextBlock>
+                </StackPanel>
+            </Button>
+        </StackPanel>
 
         <Grid>
             <Grid.ColumnDefinitions>
@@ -116,10 +173,10 @@
 
             <WrapPanel x:Name="LeftPath" Grid.Column="0" Grid.ColumnSpan="3">
                 <StackPanel Orientation="Horizontal">
-                    <Button Style="{StaticResource ResourceKey=PathButton}" IsEnabled="False">
+                    <Button Style="{StaticResource ResourceKey=PathButton}" IsEnabled="False" Click="LeftBack_Click">
                         <Image Source="/Images/back.png" Width="20" Height="20" />
                     </Button>
-                    <Button Style="{StaticResource ResourceKey=PathButton}" IsEnabled="False">
+                    <Button Style="{StaticResource ResourceKey=PathButton}" IsEnabled="False" Click="LeftForward_Click">
                         <Image Source="/Images/forward.png" Width="20" Height="20" />
                     </Button>
                 </StackPanel>
@@ -203,10 +260,10 @@
 
             <WrapPanel x:Name="RightPath" Grid.Column="4" Grid.ColumnSpan="3">
                 <StackPanel Orientation="Horizontal">
-                    <Button Style="{StaticResource ResourceKey=PathButton}" IsEnabled="False">
+                    <Button Style="{StaticResource ResourceKey=PathButton}" IsEnabled="False" Click="RightBack_Click">
                         <Image Source="/Images/back.png" Width="20" Height="20" />
                     </Button>
-                    <Button Style="{StaticResource ResourceKey=PathButton}" IsEnabled="False">
+                    <Button Style="{StaticResource ResourceKey=PathButton}" IsEnabled="False" Click="RightForward_Click">
                         <Image Source="/Images/forward.png" Width="20" Height="20" />
                     </Button>
                 </StackPanel>

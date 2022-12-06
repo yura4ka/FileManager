@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Windows.Media.Imaging;
 
 namespace FileManager
@@ -41,12 +40,23 @@ namespace FileManager
 			Image = Icons.FromFile(info);
 		}
 
-		private static string ConvertSize(long size) 
+		private static string ConvertSize(long size)
 		{
 			if (size > 1e9) return (size / 1e9).ToString("N2") + "GB";
 			if (size > 1e6) return (size / 1e6).ToString("N2") + "MB";
 			if (size > 1e3) return (size / 1e3).ToString("N2") + "KB";
 			return size.ToString() + "B";
 		}
+
+		private FileData(FileData data)
+		{
+			Name = data.Name;
+			DateModified = data.DateModified;
+			Type = data.Type;
+			Size = data.Size;
+			Image = data.Image;
+		}
+
+		public FileData Clone() => new(this);
 	}
 }

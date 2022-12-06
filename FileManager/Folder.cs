@@ -10,9 +10,9 @@ namespace FileManager
 		private bool _isChildrenInitialized = false;
 
 		public ObservableCollection<FsItem> Children { get; protected set; }
-		public FsItem[] TreeView => Children.Where(i => i is Folder).ToArray();
+		public ObservableCollection<FsItem> TreeView => new(Children.Where(i => i is Folder).ToArray());
 
-		public Folder(FileData data, Folder? parent = null, bool isFillFolder = false) : base(data, parent) 
+		public Folder(FileData data, Folder? parent = null, bool isFillFolder = false) : base(data, parent)
 		{
 			Children = new();
 
@@ -20,14 +20,46 @@ namespace FileManager
 				InitializeChildren();
 		}
 
+		private Folder(Folder folder) : base(folder)
+		{
+			Children = new();
+			_isChildrenInitialized = folder._isChildrenInitialized;
+			foreach (var c in folder.Children)
+				Children.Add(c.Clone());
+		}
+
+		public override Folder Clone() => new(this);
+
+		public override void Rename(string name)
+		{
+			base.Rename(name);
+			foreach (var c in Children)
+				c.UpdateFullName();
+		}
+
 		private void InitializeChildren()
 		{
-			var items = Directory.GetFileSystemEntries(FullName);
-			foreach (var item in items)
+			var query =
+				from e in Directory.GetFileSystemEntries(FullName)
+				let i = new FileInfo(e)
+				where !i.Attributes.HasFlag(FileAttributes.Hidden)
+				select i;
+			var infos = query.ToList();
+
+			for (int i = 0; i < Children.Count; i++)
 			{
-				var info = new FileInfo(item);
-				if (info.Attributes.HasFlag(FileAttributes.Hidden)) 
-					continue;
+				var c = Children[i];
+				var info = infos.Where(info => c.FullName == info.FullName).FirstOrDefault();
+				if (info == null)
+					Children.RemoveAt(i);
+				else
+					c.UpdateInfo(info);
+				infos.Remove(info);
+			}
+
+			foreach (var info in infos)
+			{
+
 				if (info.Attributes.HasFlag(FileAttributes.Directory))
 					Children.Add(new Folder(new FileData(info), this));
 				else
@@ -39,25 +71,32 @@ namespace FileManager
 
 		public bool TryInitializeChildren()
 		{
-			if (_isChildrenInitialized) 
-				return false;
 			InitializeChildren();
 			return true;
 		}
 
-		public List<Folder> GetFullPathItems()
+		public override List<Folder> GetFullPathItems()
 		{
-			var result = new List<Folder>() { this };
-			var currentparrent = _parent;
-
-			while (currentparrent != null)
-			{
-				result.Add(currentparrent);
-				currentparrent = currentparrent._parent;
-			}
-
-			result.Reverse();
+			var result = base.GetFullPathItems();
+			result.Add(this);
 			return result;
 		}
+
+		public bool IsAncestorOf(Folder folder)
+		{
+			var currentParent = _parent;
+			while (currentParent != null)
+			{
+				if (currentParent == folder)
+					return true;
+				currentParent = currentParent?._parent;
+			}
+
+			return false;
+		}
+
+		public bool HasChildWithName(string name) => Children.Any(c => c.Name == name);
+
+		public FsItem? GetChildrentByName(string name) => Children.FirstOrDefault(c => c.Name == name);
 	}
 }

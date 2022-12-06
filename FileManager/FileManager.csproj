@@ -9,7 +9,12 @@
 
   <ItemGroup>
     <None Remove="Images\back.png" />
+    <None Remove="Images\copy.png" />
     <None Remove="Images\forward.png" />
+    <None Remove="Images\move.png" />
+    <None Remove="Images\paste.png" />
+    <None Remove="Images\remove.png" />
+    <None Remove="Images\rename.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,6 +23,9 @@
 
   <ItemGroup>
     <Resource Include="Images\back.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\copy.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\drive.png">
@@ -30,6 +38,18 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\forward.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\move.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\paste.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\remove.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\rename.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

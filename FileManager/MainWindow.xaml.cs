@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,6 +11,10 @@ namespace FileManager
 		private readonly FileSystem fs = new();
 		private readonly TabController _leftTab;
 		private readonly TabController _rigthTab;
+		private Folder? _currentFolder = null;
+
+		private bool HasSelected => _leftTab.HasSelected || _rigthTab.HasSelected;
+		private bool HasBufferItems => fs.HasBufferItems;
 
 		public MainWindow()
 		{
@@ -22,12 +27,20 @@ namespace FileManager
 			_rigthTab = new(RightTree, RightList, RightStatus, RightPath);
 		}
 
-		private static void OnTreeItemClick(TabController tab)
+		private void SetToolButtons()
+		{
+			foreach (var b in ToolBar.Children.OfType<Button>())
+				b.IsEnabled = HasSelected;
+			PasteButton.IsEnabled = HasBufferItems;
+		}
+
+		private void OnTreeItemClick(TabController tab)
 		{
 			Folder selected = (Folder)tab.Tree.SelectedItem;
 			tab.SetListSourse(selected);
 			tab.SetPath(selected);
 			tab.History.Add(selected);
+			_currentFolder = selected;
 		}
 
 		private void LeftTreeItem_Click(object sender, MouseButtonEventArgs e)
@@ -46,19 +59,21 @@ namespace FileManager
 		{
 			if (e.OriginalSource is not TreeViewItem item)
 				return;
-
+			((Folder)item.DataContext).TryInitializeChildren();
 			foreach (FsItem i in item.Items)
 			{
 				if (i is Folder folder)
 					folder.TryInitializeChildren();
 			}
+			item.Items.Refresh();
 		}
 
-		private static void OnFolderDoubleClick(TabController tab, Folder folder)
+		private void OnFolderDoubleClick(TabController tab, Folder folder)
 		{
 			tab.SetListSourse(folder);
 			tab.History.Add(folder);
 			tab.Path.Items.Add(folder);
+			_currentFolder = folder;
 		}
 
 		private void LeftItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -73,11 +88,11 @@ namespace FileManager
 				OnFolderDoubleClick(_rigthTab, folder);
 		}
 
-		private static void OnPathClick(TabController tab, Folder folder)
+		private void OnPathClick(TabController tab, Folder folder)
 		{
 			tab.SetListSourse(folder);
 			tab.History.Add(folder);
-
+			_currentFolder = folder;
 			var items = tab.Path.Items;
 			int i = items.Count - 1;
 			while (items[i] != folder)
@@ -107,13 +122,113 @@ namespace FileManager
 		private void LeftList_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (_leftTab.List.SelectedItems.Count != 0)
+			{
+				fs.SelectedItem = (FsItem)_leftTab.List.SelectedItem;
 				_rigthTab.List.UnselectAll();
+			}
+			SetToolButtons();
 		}
 
 		private void RightList_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (_rigthTab.List.SelectedItems.Count != 0)
+			{
+				fs.SelectedItem = (FsItem)_rigthTab.List.SelectedItem;
 				_leftTab.List.UnselectAll();
+			}
+
+			SetToolButtons();
 		}
+
+		private IEnumerable<FsItem> GetCurrentSelection()
+		{
+			if (LeftList.SelectedItems.Count != 0)
+				return LeftList.SelectedItems.Cast<FsItem>();
+			else if (RightList.SelectedItems.Count != 0)
+				return RightList.SelectedItems.Cast<FsItem>();
+			return new List<FsItem>();
+		}
+
+		private void MoveButton_Click(object sender, RoutedEventArgs e)
+		{
+			fs.AddToBuffer(GetCurrentSelection());
+			SetToolButtons();
+		}
+
+		private void CopyButton_Click(object sender, RoutedEventArgs e)
+		{
+			fs.AddToBuffer(GetCurrentSelection(), true);
+			SetToolButtons();
+		}
+
+		private void RefreshLists()
+		{
+			_leftTab.RefreshList();
+			_rigthTab.RefreshList();
+		}
+
+		private void RefreshTree(FsItem item, bool isParent = true)
+		{
+			_leftTab.RefreshTree(item, isParent);
+			_rigthTab.RefreshTree(item, isParent);
+		}
+
+		private void RefreshAll(FsItem item)
+		{
+			_leftTab.RefreshAll(item);
+			_rigthTab.RefreshAll(item);
+		}
+
+		private void PasteButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (_currentFolder == null)
+				return;
+			if (!fs.MoveFromBuffer(_currentFolder))
+				return;
+			RefreshLists();
+			RefreshTree(_currentFolder);
+			SetToolButtons();
+			if (fs.BufferSourseFile != null)
+				RefreshTree(fs.BufferSourseFile, false);
+		}
+
+		private void RemoveButton_Click(object sender, RoutedEventArgs e)
+		{
+			List<FsItem> selection = GetCurrentSelection().ToList();
+
+			if (selection.Count == 0)
+				return;
+
+			if (MessageBox.Show($"Ви впевнені, що хочете видалити назавжди {selection.Count} елементів",
+				"File Manager",
+				MessageBoxButton.OKCancel,
+				MessageBoxImage.Exclamation)
+			== MessageBoxResult.Cancel)
+				return;
+			FileSystem.RemoveItems(selection);
+			if (_currentFolder != null)
+				RefreshAll(_currentFolder);
+		}
+
+		private void RenameButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (fs.SelectedItem != null && fs.RenameSelected())
+				RefreshAll(fs.SelectedItem);
+		}
+
+		private void BackClick(TabController tab)
+		{
+			_currentFolder = tab.OnBackClick();
+		}
+
+		private void ForwardClick(TabController tab)
+		{
+			_currentFolder = tab.OnForwardClick();
+		}
+
+		private void LeftBack_Click(object sender, RoutedEventArgs e) => BackClick(_leftTab);
+		private void LeftForward_Click(object sender, RoutedEventArgs e) => ForwardClick(_leftTab);
+		private void RightBack_Click(object sender, RoutedEventArgs e) => BackClick(_rigthTab);
+		private void RightForward_Click(object sender, RoutedEventArgs e) => ForwardClick(_rigthTab);
 	}
 }
