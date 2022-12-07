@@ -230,5 +230,12 @@ namespace FileManager
 		private void LeftForward_Click(object sender, RoutedEventArgs e) => ForwardClick(_leftTab);
 		private void RightBack_Click(object sender, RoutedEventArgs e) => BackClick(_rigthTab);
 		private void RightForward_Click(object sender, RoutedEventArgs e) => ForwardClick(_rigthTab);
+
+		private void OpenInEditorButton_Click(object sender, RoutedEventArgs e)
+		{
+			List<FsItem> selection = GetCurrentSelection().ToList();
+			if (selection.Count != 0)
+				new TextEditor(selection[0].FullName).Show();
+		}
 	}
 }

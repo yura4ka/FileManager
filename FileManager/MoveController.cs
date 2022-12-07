@@ -106,7 +106,7 @@ namespace FileManager
 
 			while (true)
 			{
-				var newName = FileSystem.AskNewName(toRename);
+				var newName = RenameController.AskNewName(toRename);
 				if (newName == null)
 				{
 					toRename.Remove();
@@ -115,13 +115,13 @@ namespace FileManager
 
 				if (newName == toRename.Name || toRename.HasSiblingWithName(newName))
 				{
-					FileSystem.ShowAlreadyExists();
+					RenameController.ShowAlreadyExists();
 					continue;
 				}
 
 				if (newName.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
 				{
-					FileSystem.ShowNameWrongFormat();
+					RenameController.ShowNameWrongFormat();
 					continue;
 				}
 

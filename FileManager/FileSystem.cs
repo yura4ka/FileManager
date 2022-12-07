@@ -6,8 +6,6 @@ using System.Linq;
 using System.Windows;
 using FileManager.Dialogs;
 
-using FS = Microsoft.VisualBasic.FileIO.FileSystem;
-
 namespace FileManager
 {
 	class FileSystem
@@ -36,73 +34,12 @@ namespace FileManager
 			BufferSourseFile = items.FirstOrDefault()?.GetParent();
 		}
 
-		public bool RenameSelected() => Rename(SelectedItem);
-
-		public static string? AskNewName(FsItem item)
-		{
-			var dialog = new RenameFileDialog(item.Name);
-			if (dialog.ShowDialog() != true)
-				return null;
-			return dialog.NewFileName;
-		}
-
-		private static bool? TryRenameFile(FsItem item, string newName)
-		{
-			try
-			{
-				if (item is File)
-					FS.RenameFile(item.FullName, newName);
-				else
-					FS.RenameDirectory(item.FullName, newName);
-				return true;
-			}
-			catch (ArgumentException)
-			{
-				ShowNameWrongFormat();
-				return null;
-			}
-			catch (Exception ex)
-			{
-				ShowErrorMessage(ex.Message);
-				return false;
-			}
-		}
-
-		private static bool Rename(FsItem? item)
-		{
-			if (item == null)
-				return false;
-
-			while (true)
-			{
-				var newName = AskNewName(item);
-				if (newName == null)
-					return false;
-
-				if (item.HasSiblingWithName(newName))
-				{
-					ShowAlreadyExists();
-					continue;
-				}
-				if (newName == item.Name)
-					return false;
-
-				bool? result = TryRenameFile(item, newName);
-				if (result == null)
-					continue;
-				item.Rename(newName);
-				return result.Value;
-			}
-		}
+		public bool RenameSelected() => RenameController.Rename(SelectedItem);
 
 		public static void ShowErrorMessage(string message)
 		{
 			MessageBox.Show(message, "File Manager", MessageBoxButton.OK, MessageBoxImage.Error);
 		}
-
-		public static void ShowAlreadyExists() => ShowErrorMessage("Файл із таким ім'ям вже існує");
-
-		public static void ShowNameWrongFormat() => ShowErrorMessage("Нове ім'я має невірний формат");
 
 		public bool MoveFromBuffer(Folder destination)
 		{
