@@ -6,20 +6,24 @@ namespace FileManager.SaveController
 {
 	class SimpleFileSaver : FileSaver
 	{
-		public override bool? SaveFile(string path, string text)
+		public override (bool?, string) SaveFile(string path, string text)
 		{
 			try
 			{
-				var dialog = new SaveFileDialog { FileName = Path.GetFileName(path), };
+				var dialog = new SaveFileDialog 
+				{ 
+					FileName = Path.GetFileName(path), 
+					Filter = "All files (*.*)|*.*" 
+				};
 				bool? result = dialog.ShowDialog();
 				if (result != true)
-					return null;
-				System.IO.File.WriteAllText(path, text, Encoding.UTF8);
-				return true;
+					return (null, "");
+				System.IO.File.WriteAllText(dialog.FileName, text, Encoding.UTF8);
+				return (true, dialog.FileName);
 			}
 			catch
 			{
-				return false;
+				return (false, "");
 			}
 		}
 	}

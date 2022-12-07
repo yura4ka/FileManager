@@ -58,8 +58,4 @@
     </Resource>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="SaveController\" />
-  </ItemGroup>
-
 </Project>

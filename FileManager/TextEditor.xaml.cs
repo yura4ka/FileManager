@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace FileManager
 {
@@ -16,7 +17,7 @@ namespace FileManager
 			InitializeComponent();
 			_path = path;
 			Editor.Text = System.IO.File.ReadAllLines(path).Aggregate((a, b) => $"{a}\n{b}");
-			Title = Path.GetFileName(path);
+			Title = Path.GetFileName(path) + " - Text Editor";
 		}
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -130,9 +131,44 @@ namespace FileManager
 			}
 		}
 
+		private void SetNewPath (bool? result, string newPath)
+		{
+			if (result == false)
+				FileSystem.ShowErrorMessage("Не вдалося зберегти файл.");
+			if (result == true)
+			{
+				_isSaved = true;
+				_path = newPath;
+				Title = Path.GetFileName(newPath) + " - Text Editor";
+			}
+		}
+
 		private void SaveAs_Click(object sender, RoutedEventArgs e)
 		{
+			(var result, string newPath) = new FileSaverCreator()
+				.CreateSaver(SaverCreator.SaverTypes.SIMPLE)
+				.SaveFile(_path, Editor.Text);
+			SetNewPath(result, newPath);
+		}
 
+		private void HtmlSave_Click(object sender, RoutedEventArgs e)
+		{
+			(var result, string newPath) = new FileSaverCreator()
+				.CreateSaver(SaverCreator.SaverTypes.HTML)
+				.SaveFile(_path, Editor.Text);
+			SetNewPath(result, newPath);
+		}
+
+		private void BinSave_Click(object sender, RoutedEventArgs e)
+		{
+			var sb = new StringBuilder();
+			foreach (char c in Editor.Text.ToCharArray())
+				sb.Append(Convert.ToString(c, 2).PadLeft(8, '0'));
+			Editor.Text = sb.ToString();
+			(var result, string newPath) = new FileSaverCreator()
+				.CreateSaver(SaverCreator.SaverTypes.BINARY)
+				.SaveFile(_path, Editor.Text);
+			SetNewPath(result, newPath);
 		}
 	}
 }

@@ -2,6 +2,6 @@
 {
 	abstract class FileSaver
 	{
-		public abstract bool? SaveFile(string path, string text);
+		public abstract (bool?, string) SaveFile(string path, string text);
 	}
 }
