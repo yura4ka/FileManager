@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileManager.SaveController;
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -118,7 +119,20 @@ namespace FileManager
 
 		private void Save_Click(object sender, RoutedEventArgs e)
 		{
-			
+			try
+			{
+				System.IO.File.WriteAllText(_path, Editor.Text, Encoding.UTF8);
+				_isSaved = true;
+			}
+			catch(Exception ex)
+			{
+				FileSystem.ShowErrorMessage(ex.Message);
+			}
+		}
+
+		private void SaveAs_Click(object sender, RoutedEventArgs e)
+		{
+
 		}
 	}
 }
