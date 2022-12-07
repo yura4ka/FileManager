@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FileManager"
         mc:Ignorable="d"
+        Loaded="Window_Loaded"
         Title="Text Editor" Height="450" Width="800">
     <Grid>
         <Grid.RowDefinitions>
@@ -16,7 +17,7 @@
             <MenuItem Header="File">
                 <MenuItem Header="New" />
                 <MenuItem Header="Open" />
-                <MenuItem Header="Save" />
+                <MenuItem Header="Save" Click="Save_Click" />
                 <MenuItem Header="Save As..." />
                 <Separator />
                 <MenuItem Header="Exit" />
@@ -32,12 +33,15 @@
             </MenuItem>
         </Menu>
         <TextBox
-          x:Name="Editor"
-          TextWrapping="Wrap"
-          AcceptsReturn="True"
-          VerticalScrollBarVisibility="Visible"
-          Grid.Row="1"
-          SelectionChanged="Editor_SelectionChanged" />
+            x:Name="Editor"
+            TextWrapping="Wrap"
+            AcceptsReturn="True"
+            VerticalScrollBarVisibility="Visible"
+            HorizontalScrollBarVisibility="Visible"
+            Grid.Row="1"
+            SelectionChanged="Editor_SelectionChanged"
+            TextChanged="Editor_TextChanged"
+        />
         <StatusBar Grid.Row="2">
             <StatusBarItem>
                 <TextBlock x:Name="Position" Text="Line 1, Column 1" />
