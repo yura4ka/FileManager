@@ -20,10 +20,10 @@ namespace FileManager
 			{
 				Editor.Text = System.IO.File.ReadAllText(path);
 			}
-			catch (Exception ex) 
-			{ 
-				FileSystem.ShowErrorMessage(ex.Message); 
-				Close(); 
+			catch (Exception ex)
+			{
+				FileSystem.ShowErrorMessage(ex.Message);
+				Close();
 			}
 			Title = Path.GetFileName(path) + " - Text Editor";
 		}
@@ -137,8 +137,8 @@ namespace FileManager
 		{
 			if (!Path.IsPathRooted(_path))
 			{
-				 SaveAs_Click(sender, e);
-				 return;
+				SaveAs_Click(sender, e);
+				return;
 			}
 			try
 			{
@@ -226,13 +226,13 @@ namespace FileManager
 					DefaultExt = "txt",
 					Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*",
 				};
-				if (dialog.ShowDialog() != true) 
+				if (dialog.ShowDialog() != true)
 					return;
 				string text = System.IO.File.ReadAllText(dialog.FileName);
 				Editor.Text = text;
 				SetNewPath(true, dialog.FileName);
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				FileSystem.ShowErrorMessage(ex.Message);
 			}

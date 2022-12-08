@@ -31,7 +31,7 @@
                 </Style>
             </Style.Resources>
         </Style>
-        
+
         <Style TargetType="Button" x:Key="PathButton">
             <Setter Property="Padding" Value="5" />
             <Setter Property="BorderThickness" Value="0" />
@@ -70,6 +70,18 @@
         </Menu>
 
         <StackPanel x:Name="ToolBar" DockPanel.Dock="Top" Orientation="Horizontal" Background="#f5f6f7" Margin="0 0 0 10">
+            <Button x:Name="CreateFolderButton" Style="{StaticResource ToolBarItem}" Click="CreateFolderButton_Click">
+                <StackPanel>
+                    <Image Source="/Images/createFolder.png" />
+                    <TextBlock>Створити папку</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button x:Name="CreateFileButton" Style="{StaticResource ToolBarItem}" Click="CreateFileButton_Click">
+                <StackPanel>
+                    <Image Source="/Images/createFile.png" />
+                    <TextBlock>Створити файл</TextBlock>
+                </StackPanel>
+            </Button>
             <Button x:Name="MoveButton" Style="{StaticResource ToolBarItem}" Click="MoveButton_Click">
                 <StackPanel>
                     <Image Source="/Images/move.png" />
@@ -100,7 +112,6 @@
                     <TextBlock>Перейменувати</TextBlock>
                 </StackPanel>
             </Button>
-            <Separator></Separator>
             <Button x:Name="OpenInEditorButton" Style="{StaticResource ToolBarItem}" Click="OpenInEditorButton_Click">
                 <StackPanel>
                     <Image Source="/Images/openInEditor.png" />

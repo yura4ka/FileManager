@@ -93,5 +93,54 @@ namespace FileManager
 				}
 			}
 		}
+
+		private static bool ValidateNewName(string? name, Folder parent)
+		{
+			if (name == null || name.Length == 0)
+				return false;
+			if (parent.HasChildWithName(name))
+			{
+				RenameController.ShowAlreadyExists();
+				return false;
+			}
+			if (name.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
+			{
+				RenameController.ShowNameWrongFormat();
+				return false;
+			}
+			return true;
+		}
+
+		private static FsItem? CreateNewItem(Folder parent, bool isFolder)
+		{
+			var name = RenameController.AskNewName("", true);
+			if (!ValidateNewName(name, parent))
+				return null;
+			try
+			{
+				string path = Path.GetFullPath($"{parent.FullName}/{name}");
+				if (isFolder) Directory.CreateDirectory(path);
+				else System.IO.File.Create(path);
+				var info = new FileData(new FileInfo(path));
+				FsItem item = isFolder ? new Folder(info, parent) : new File(info, parent);
+				parent.Children.Add(item);
+				return item;
+			}
+			catch (Exception ex)
+			{
+				ShowErrorMessage(ex.Message);
+				return null;
+			}
+		}
+
+		public static Folder? CreateDirectory(Folder parent)
+		{
+			return (Folder?)CreateNewItem(parent, true);
+		}
+
+		public static File? CreateFile(Folder parent)
+		{
+			return (File?)CreateNewItem(parent, false);
+		}
 	}
 }

@@ -107,7 +107,7 @@ namespace FileManager
 			while (true)
 			{
 				var newName = RenameController.AskNewName(toRename);
-				if (newName == null)
+				if (newName == null || newName.Length == 0)
 				{
 					toRename.Remove();
 					return ContinueSkipOne();

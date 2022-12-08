@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 namespace FileManager
@@ -27,11 +28,21 @@ namespace FileManager
 			_rigthTab = new(RightTree, RightList, RightStatus, RightPath);
 		}
 
+		private void SetCurrentFolder(Folder folder)
+		{
+			_currentFolder = folder;
+			CreateFileButton.IsEnabled = _currentFolder != null;
+			CreateFolderButton.IsEnabled = _currentFolder != null;
+		}
+
 		private void SetToolButtons()
 		{
 			foreach (var b in ToolBar.Children.OfType<Button>())
 				b.IsEnabled = HasSelected;
 			PasteButton.IsEnabled = HasBufferItems;
+			OpenInEditorButton.IsEnabled = GetCurrentSelection().OfType<File>().FirstOrDefault() != null;
+			CreateFileButton.IsEnabled = _currentFolder != null;
+			CreateFolderButton.IsEnabled = _currentFolder != null;
 		}
 
 		private void OnTreeItemClick(TabController tab)
@@ -40,7 +51,7 @@ namespace FileManager
 			tab.SetListSourse(selected);
 			tab.SetPath(selected);
 			tab.History.Add(selected);
-			_currentFolder = selected;
+			SetCurrentFolder(selected);
 		}
 
 		private void LeftTreeItem_Click(object sender, MouseButtonEventArgs e)
@@ -73,7 +84,7 @@ namespace FileManager
 			tab.SetListSourse(folder);
 			tab.History.Add(folder);
 			tab.Path.Items.Add(folder);
-			_currentFolder = folder;
+			SetCurrentFolder(folder);
 		}
 
 		private void LeftItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -92,7 +103,7 @@ namespace FileManager
 		{
 			tab.SetListSourse(folder);
 			tab.History.Add(folder);
-			_currentFolder = folder;
+			SetCurrentFolder(folder);
 			var items = tab.Path.Items;
 			int i = items.Count - 1;
 			while (items[i] != folder)
@@ -218,12 +229,12 @@ namespace FileManager
 
 		private void BackClick(TabController tab)
 		{
-			_currentFolder = tab.OnBackClick();
+			SetCurrentFolder(tab.OnBackClick());
 		}
 
 		private void ForwardClick(TabController tab)
 		{
-			_currentFolder = tab.OnForwardClick();
+			SetCurrentFolder(tab.OnForwardClick());
 		}
 
 		private void LeftBack_Click(object sender, RoutedEventArgs e) => BackClick(_leftTab);
@@ -233,9 +244,27 @@ namespace FileManager
 
 		private void OpenInEditorButton_Click(object sender, RoutedEventArgs e)
 		{
-			List<FsItem> selection = GetCurrentSelection().ToList();
+			var selection = GetCurrentSelection().OfType<File>().ToList();
 			if (selection.Count != 0)
 				new TextEditor(selection[0].FullName).Show();
+		}
+
+		private void CreateFolderButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (_currentFolder == null)
+				return;
+			var newFolder = FileSystem.CreateDirectory(_currentFolder);
+			if (newFolder != null)
+				RefreshAll(newFolder);
+		}
+
+		private void CreateFileButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (_currentFolder == null)
+				return;
+			var newFile = FileSystem.CreateFile(_currentFolder);
+			if (newFile != null)
+				RefreshAll(newFile);
 		}
 	}
 }

@@ -9,7 +9,7 @@
         SizeToContent="WidthAndHeight"
         ShowInTaskbar="False"
         Loaded="Window_Loaded"
-        Title="Rename File" Height="350" Width="500">
+        Title="Rename" Height="350" Width="500">
     <Window.Resources>
         <Style TargetType="TextBlock" x:Key="Small">
             <Setter Property="FontSize" Value="15" />
@@ -22,16 +22,18 @@
             <Setter Property="Padding" Value="8 5" />
         </Style>
     </Window.Resources>
-    
+
     <StackPanel Margin="20">
-        <TextBlock Text="Перейменувати файл" Margin="15" FontSize="24" FontWeight="Medium"/>
-        <TextBlock Style="{StaticResource Small}" Text="Стара назва" />
-        <TextBox x:Name="OldName" Text="File.Abc" FontSize="20" Padding="5 8" IsReadOnly="True" IsEnabled="False" Margin="0 0 0 20"/>
+        <StackPanel x:Name="Old">
+            <TextBlock Text="Перейменувати файл" Margin="15" FontSize="24" FontWeight="Medium"/>
+            <TextBlock Style="{StaticResource Small}" Text="Стара назва" />
+            <TextBox x:Name="OldName" Text="File.Abc" FontSize="20" Padding="5 8" IsReadOnly="True" IsEnabled="False" Margin="0 0 0 20"/>
+        </StackPanel>
         <TextBlock Style="{StaticResource Small}" Text="Нова назва" />
         <TextBox x:Name="NewName" Text="{Binding NewFileName, Mode=TwoWay}" FontSize="20" Padding="5 8" Margin="0 0 0 30"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Скасувати" IsCancel="True" Click="Cancel_Click"/>
-            <Button Content="Перейменувати" IsDefault="True" Click="Ok_Click" Margin="20 0 0 0" />
+            <Button x:Name="Confirm" Content="Перейменувати" IsDefault="True" Click="Ok_Click" Margin="20 0 0 0" />
         </StackPanel>
     </StackPanel>
 </Window>

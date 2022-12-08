@@ -5,12 +5,18 @@ namespace FileManager.Dialogs
 	public partial class RenameFileDialog : Window
 	{
 		public string NewFileName { get; set; }
-		public RenameFileDialog(string fileName)
+		public RenameFileDialog(string fileName, bool isNewFile = false)
 		{
 			InitializeComponent();
 			DataContext = this;
 			OldName.Text = fileName;
 			NewFileName = fileName;
+			if (isNewFile)
+			{
+				Title = "Create";
+				Old.Visibility = Visibility.Collapsed;
+				Confirm.Content = "Створити";
+			}
 		}
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)

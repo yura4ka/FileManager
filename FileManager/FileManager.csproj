@@ -10,6 +10,8 @@
   <ItemGroup>
     <None Remove="Images\back.png" />
     <None Remove="Images\copy.png" />
+    <None Remove="Images\createFile.png" />
+    <None Remove="Images\createFolder.png" />
     <None Remove="Images\forward.png" />
     <None Remove="Images\move.png" />
     <None Remove="Images\openInEditor.png" />
@@ -27,6 +29,12 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\copy.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\createFile.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\createFolder.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\drive.png">

@@ -1,5 +1,6 @@
 ﻿using FileManager.Dialogs;
 using System;
+using System.IO;
 using FS = Microsoft.VisualBasic.FileIO.FileSystem;
 
 namespace FileManager
@@ -9,12 +10,17 @@ namespace FileManager
 		public static void ShowAlreadyExists() => FileSystem.ShowErrorMessage("Файл із таким ім'ям вже існує");
 		public static void ShowNameWrongFormat() => FileSystem.ShowErrorMessage("Нове ім'я має невірний формат");
 
-		public static string? AskNewName(FsItem item)
+		public static string? AskNewName(string oldName, bool newFile = false)
 		{
-			var dialog = new RenameFileDialog(item.Name);
+			var dialog = new RenameFileDialog(oldName, newFile);
 			if (dialog.ShowDialog() != true)
 				return null;
-			return dialog.NewFileName;
+			return dialog.NewFileName.Trim();
+		}
+
+		public static string? AskNewName(FsItem item, bool newFile = false)
+		{
+			return AskNewName(item.Name, newFile);
 		}
 
 		private static bool? TryRenameFile(FsItem item, string newName)
@@ -47,8 +53,14 @@ namespace FileManager
 			while (true)
 			{
 				var newName = AskNewName(item);
-				if (newName == null)
+				if (newName == null || newName.Length == 0)
 					return false;
+
+				if (newName.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
+				{
+					ShowNameWrongFormat();
+					continue;
+				}
 
 				if (item.HasSiblingWithName(newName))
 				{
