@@ -13,7 +13,8 @@ namespace FileManager.SaveController
 				var dialog = new SaveFileDialog 
 				{ 
 					FileName = Path.GetFileName(path), 
-					Filter = "All files (*.*)|*.*" 
+					Filter = "All files (*.*)|*.*",
+					DefaultExt = "txt",
 				};
 				bool? result = dialog.ShowDialog();
 				if (result != true)

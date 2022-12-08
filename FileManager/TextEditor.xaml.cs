@@ -1,22 +1,30 @@
 ﻿using FileManager.SaveController;
+using Microsoft.Win32;
 using System;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace FileManager
 {
 	public partial class TextEditor : Window
 	{
-		private bool _isSaved = false;
+		private bool _isSaved;
 		private string _path;
 		public TextEditor(string path)
 		{
 			InitializeComponent();
 			_path = path;
-			Editor.Text = System.IO.File.ReadAllLines(path).Aggregate((a, b) => $"{a}\n{b}");
+			try
+			{
+				Editor.Text = System.IO.File.ReadAllText(path);
+			}
+			catch (Exception ex) 
+			{ 
+				FileSystem.ShowErrorMessage(ex.Message); 
+				Close(); 
+			}
 			Title = Path.GetFileName(path) + " - Text Editor";
 		}
 
@@ -24,6 +32,13 @@ namespace FileManager
 		{
 			Editor.Focus();
 			Editor.Select(0, 0);
+			_isSaved = true;
+		}
+
+		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			if (!ConfirmExit())
+				e.Cancel = true;
 		}
 
 		private void Editor_SelectionChanged(object sender, RoutedEventArgs e)
@@ -106,7 +121,7 @@ namespace FileManager
 						continue;
 					}
 					builer[index] = builer[index].ToString().ToUpper()[0];
-					index = s.IndexOfAny(separators, index + 1);	
+					index = s.IndexOfAny(separators, index + 1);
 				}
 
 				return builer.ToString();
@@ -120,18 +135,23 @@ namespace FileManager
 
 		private void Save_Click(object sender, RoutedEventArgs e)
 		{
+			if (!Path.IsPathRooted(_path))
+			{
+				 SaveAs_Click(sender, e);
+				 return;
+			}
 			try
 			{
 				System.IO.File.WriteAllText(_path, Editor.Text, Encoding.UTF8);
 				_isSaved = true;
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				FileSystem.ShowErrorMessage(ex.Message);
 			}
 		}
 
-		private void SetNewPath (bool? result, string newPath)
+		private void SetNewPath(bool? result, string newPath)
 		{
 			if (result == false)
 				FileSystem.ShowErrorMessage("Не вдалося зберегти файл.");
@@ -161,14 +181,61 @@ namespace FileManager
 
 		private void BinSave_Click(object sender, RoutedEventArgs e)
 		{
-			var sb = new StringBuilder();
-			foreach (char c in Editor.Text.ToCharArray())
-				sb.Append(Convert.ToString(c, 2).PadLeft(8, '0'));
-			Editor.Text = sb.ToString();
 			(var result, string newPath) = new FileSaverCreator()
 				.CreateSaver(SaverCreator.SaverTypes.BINARY)
 				.SaveFile(_path, Editor.Text);
 			SetNewPath(result, newPath);
+			try { Editor.Text = System.IO.File.ReadAllText(newPath); }
+			catch (Exception ex) { FileSystem.ShowErrorMessage(ex.Message); }
+			_isSaved = true;
+		}
+
+		private bool ConfirmExit()
+		{
+			if (_isSaved)
+				return true;
+			var result = MessageBox.Show(
+				"Ви впевнені, що хочете вийти. Незбережені дані будуть видалені!",
+				"Text Editor",
+				MessageBoxButton.OKCancel,
+				MessageBoxImage.Exclamation);
+			return result == MessageBoxResult.OK;
+		}
+
+		private void Exit_Click(object sender, RoutedEventArgs e)
+		{
+			Close();
+		}
+
+		private void New_Click(object sender, RoutedEventArgs e)
+		{
+			if (!ConfirmExit())
+				return;
+			Editor.Text = "";
+			SetNewPath(true, "New Document");
+		}
+
+		private void Open_Click(object sender, RoutedEventArgs e)
+		{
+			if (!ConfirmExit())
+				return;
+			try
+			{
+				var dialog = new OpenFileDialog
+				{
+					DefaultExt = "txt",
+					Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*",
+				};
+				if (dialog.ShowDialog() != true) 
+					return;
+				string text = System.IO.File.ReadAllText(dialog.FileName);
+				Editor.Text = text;
+				SetNewPath(true, dialog.FileName);
+			}
+			catch(Exception ex)
+			{
+				FileSystem.ShowErrorMessage(ex.Message);
+			}
 		}
 	}
 }

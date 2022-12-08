@@ -11,6 +11,10 @@ namespace FileManager.SaveController
 		{
 			try
 			{
+				var sb = new StringBuilder();
+				foreach (char c in text.ToCharArray())
+					sb.Append(Convert.ToString(c, 2).PadLeft(8, '0'));
+
 				var dialog = new SaveFileDialog
 				{
 					FileName = Path.GetFileNameWithoutExtension(path) + ".bin",
@@ -24,7 +28,7 @@ namespace FileManager.SaveController
 				if (Path.GetExtension(dialog.FileName) != ".bin")
 					dialog.FileName += ".bin";
 
-				System.IO.File.WriteAllText(dialog.FileName, text.ToString());
+				System.IO.File.WriteAllText(dialog.FileName, sb.ToString());
 				return (true, dialog.FileName);
 			}
 			catch
