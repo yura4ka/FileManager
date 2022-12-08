@@ -1,9 +1,11 @@
 ﻿using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Documents;
 
 namespace FileManager
 {
@@ -84,6 +86,16 @@ namespace FileManager
 				.Select(node => node.Attributes["src"]?.Value ?? "")
 				.Where(src => !string.IsNullOrEmpty(src))
 				.ToList();
+		}
+
+		public static (string, bool) MakePathAbsoulute(string path, string parent)
+		{
+			if (Uri.TryCreate(path, UriKind.Absolute, out _))
+				return (path, false);
+			else if (Path.IsPathFullyQualified(path) && path[0] != '/')
+				return (path, true);
+			else
+				return (Path.Join(parent, path).Replace('/', '\\'), true);
 		}
 	}
 }

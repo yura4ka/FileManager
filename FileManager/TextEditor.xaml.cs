@@ -5,6 +5,8 @@ using System;
 using System.IO;
 using System.Text;
 using System.Windows;
+using WF = System.Windows.Forms;
+using VB = Microsoft.VisualBasic.FileIO;
 
 namespace FileManager
 {
@@ -211,6 +213,41 @@ namespace FileManager
 				FileSystem.ShowErrorMessage("Не знайдено жодного посилання");
 			else
 				new ImagesFromHtml(images, Path.GetDirectoryName(_path) ?? "").Show();
+		}
+
+		private void MoveHtml_Click(object sender, RoutedEventArgs e)
+		{
+			(var result, string newPath) = new FileSaverCreator()
+				.CreateSaver(SaverCreator.SaverTypes.HTML)
+				.SaveFile(_path, Editor.SelectedText);
+			if (result != true)
+				return;
+			var images = EditorUtils.GetImagesFromHtml(Editor.Text);
+			if (images.Count == 0)
+				return;
+
+			string parent = Path.GetDirectoryName(_path) ?? "";
+			using var dialog = new WF.FolderBrowserDialog
+			{
+				Description = "Виберіть папку для графічних файлів",
+				UseDescriptionForTitle = true,
+				SelectedPath = _path,
+				ShowNewFolderButton = true,
+			};
+
+			if (dialog.ShowDialog() != WF.DialogResult.OK)
+				return;
+			foreach (var i in images)
+			{
+				(string path, bool isPath) = EditorUtils.MakePathAbsoulute(i, parent);
+				if (!isPath || !System.IO.File.Exists(path))
+					return;
+				VB.FileSystem.CopyFile(path,
+					Path.Combine(dialog.SelectedPath, Path.GetFileName(path)),
+					VB.UIOption.OnlyErrorDialogs,
+					VB.UICancelOption.DoNothing);
+			}
+
 		}
 	}
 }

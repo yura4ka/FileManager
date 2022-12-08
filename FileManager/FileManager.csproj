@@ -1,70 +1,71 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-    <UseWPF>true</UseWPF>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<UseWPF>true</UseWPF>
+		<UseWindowsForms>true</UseWindowsForms>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Images\back.png" />
-    <None Remove="Images\copy.png" />
-    <None Remove="Images\createFile.png" />
-    <None Remove="Images\createFolder.png" />
-    <None Remove="Images\forward.png" />
-    <None Remove="Images\move.png" />
-    <None Remove="Images\openInEditor.png" />
-    <None Remove="Images\paste.png" />
-    <None Remove="Images\remove.png" />
-    <None Remove="Images\rename.png" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="Images\back.png" />
+		<None Remove="Images\copy.png" />
+		<None Remove="Images\createFile.png" />
+		<None Remove="Images\createFolder.png" />
+		<None Remove="Images\forward.png" />
+		<None Remove="Images\move.png" />
+		<None Remove="Images\openInEditor.png" />
+		<None Remove="Images\paste.png" />
+		<None Remove="Images\remove.png" />
+		<None Remove="Images\rename.png" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
-    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
+		<PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Resource Include="Images\back.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Images\copy.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Images\createFile.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Images\createFolder.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Images\drive.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Images\file.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Images\folder.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Images\forward.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Images\move.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Images\openInEditor.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Images\paste.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Images\remove.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Images\rename.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
+	<ItemGroup>
+		<Resource Include="Images\back.png">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Images\copy.png">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Images\createFile.png">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Images\createFolder.png">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Images\drive.png">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Images\file.png">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Images\folder.png">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Images\forward.png">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Images\move.png">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Images\openInEditor.png">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Images\paste.png">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Images\remove.png">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Images\rename.png">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+	</ItemGroup>
 
 </Project>

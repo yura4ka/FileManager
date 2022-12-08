@@ -50,7 +50,7 @@
             </MenuItem>
             <MenuItem x:Name="HtmlMenu" Header="HTML" Visibility="Collapsed">
                 <MenuItem Header="Отримати список графічних файлів" Click="GetImageList_Click" />
-                <MenuItem x:Name="MoveHtml" IsEnabled="False" Header="Перенести виділене у новий файл із зображеннями" />
+                <MenuItem x:Name="MoveHtml" IsEnabled="False" Click="MoveHtml_Click" Header="Перенести виділене у новий файл із зображеннями" />
             </MenuItem>
         </Menu>
         <TextBox
