@@ -8,6 +8,18 @@
         Loaded="Window_Loaded"
         Closing="Window_Closing" 
         Title="Text Editor" Height="450" Width="800">
+    <Window.CommandBindings>
+        <CommandBinding Command="New" Executed="NewCommandBinding_Executed" />
+        <CommandBinding Command="Open" Executed="OpenCommandBinding_Executed" />
+        <CommandBinding Command="Save" Executed="SaveCommandBinding_Executed" />
+    </Window.CommandBindings>
+    
+    <Window.InputBindings>
+        <KeyBinding Key="N" Modifiers="Control" Command="New" />
+        <KeyBinding Key="O" Modifiers="Control" Command="Open" />
+        <KeyBinding Key="S" Modifiers="Control" Command="Save" />
+    </Window.InputBindings>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -16,9 +28,9 @@
         </Grid.RowDefinitions>
         <Menu>
             <MenuItem Header="File">
-                <MenuItem Header="New" Click="New_Click" />
-                <MenuItem Header="Open" Click="Open_Click" />
-                <MenuItem Header="Save" Click="Save_Click" />
+                <MenuItem Header="New" InputGestureText="Ctrl+N" />
+                <MenuItem Header="Open" InputGestureText="Ctrl+O" />
+                <MenuItem Header="Save" InputGestureText="Ctrl+S" />
                 <MenuItem Header="Save As...">
                     <MenuItem Header="File" Click="SaveAs_Click" />
                     <MenuItem Header="HTML File" Click="HtmlSave_Click" />
@@ -34,13 +46,18 @@
                     <MenuItem Header="усі малі" Click="AllSmall_Click" />
                     <MenuItem Header="Кожне Слово З Великої" Click="CamelCase_Click" />
                 </MenuItem>
-                <MenuItem Header="Видалити надлишкові пробіли" />
+                <MenuItem Header="Видалити надлишкові пробіли" Click="Trim_Click" />
+            </MenuItem>
+            <MenuItem x:Name="HtmlMenu" Header="HTML" Visibility="Collapsed">
+                <MenuItem Header="Отримати список графічних файлів" Click="GetImageList_Click" />
+                <MenuItem x:Name="MoveHtml" IsEnabled="False" Header="Перенести виділене у новий файл із зображеннями" />
             </MenuItem>
         </Menu>
         <TextBox
             x:Name="Editor"
             TextWrapping="Wrap"
             AcceptsReturn="True"
+            AcceptsTab="True"
             VerticalScrollBarVisibility="Visible"
             HorizontalScrollBarVisibility="Visible"
             Grid.Row="1"

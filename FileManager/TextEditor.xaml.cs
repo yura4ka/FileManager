@@ -1,8 +1,8 @@
-﻿using FileManager.SaveController;
+﻿using FileManager.Dialogs;
+using FileManager.SaveController;
 using Microsoft.Win32;
 using System;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Windows;
 
@@ -26,6 +26,9 @@ namespace FileManager
 				Close();
 			}
 			Title = Path.GetFileName(path) + " - Text Editor";
+			string extension = Path.GetExtension(path);
+			if (extension == ".html" || extension == ".htm")
+				HtmlMenu.Visibility = Visibility.Visible;
 		}
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -45,6 +48,7 @@ namespace FileManager
 		{
 			bool isSelectionEmpty = Editor.SelectedText.Length == 0;
 			ChangeRegisterItem.IsEnabled = !isSelectionEmpty;
+			MoveHtml.IsEnabled = !isSelectionEmpty;
 			if (isSelectionEmpty)
 			{
 				int row = Editor.GetLineIndexFromCharacterIndex(Editor.CaretIndex);
@@ -60,40 +64,9 @@ namespace FileManager
 			Editor.SelectedText = func(Editor.SelectedText);
 		}
 
-		private static int SkipToContent(string s, int startIndex = 0)
-		{
-			string spaces = " \n\r\t";
-			while (startIndex < s.Length && spaces.Contains(s[startIndex]))
-				startIndex++;
-			return startIndex;
-		}
-
 		private void SentenseRegister_Click(object sender, RoutedEventArgs e)
 		{
-			ChangeSelection(s =>
-			{
-				var builder = new StringBuilder();
-				char[] separators = { '.', '!', '?' };
-				int start = 0;
-				int index = s.IndexOfAny(separators, start);
-
-				while (index != -1)
-				{
-					index = SkipToContent(s, index + 1);
-					string sentence = start + 1 < index ? s[++start..index] : "";
-					builder.Append(s[start - 1].ToString().ToUpper() + sentence.ToLower());
-					start = index;
-					index = s.IndexOfAny(separators, start);
-				}
-
-				if (start < s.Length)
-				{
-					string sentence = ++start < s.Length ? s[start..] : "";
-					builder.Append(s[start - 1].ToString().ToUpper() + sentence.ToLower());
-				}
-
-				return builder.ToString();
-			});
+			ChangeSelection(s => EditorUtils.ToSentenceRegister(s));
 		}
 
 		private void AllBig_Click(object sender, RoutedEventArgs e)
@@ -108,47 +81,17 @@ namespace FileManager
 
 		private void CamelCase_Click(object sender, RoutedEventArgs e)
 		{
-			ChangeSelection(s =>
-			{
-				var builer = new StringBuilder(s);
-				char[] separators = { ' ', '\n', '\r', '\t' };
-				int index = s.IndexOfAny(separators);
-				while (++index != 0 && index < s.Length)
-				{
-					if (separators.Any(c => c == s[index]))
-					{
-						index = SkipToContent(s, index) - 1;
-						continue;
-					}
-					builer[index] = builer[index].ToString().ToUpper()[0];
-					index = s.IndexOfAny(separators, index + 1);
-				}
+			ChangeSelection(s => EditorUtils.ToCamelCase(s));
+		}
 
-				return builer.ToString();
-			});
+		private void Trim_Click(object sender, RoutedEventArgs e)
+		{
+			Editor.Text = EditorUtils.TrimText(Editor.Text);
 		}
 
 		private void Editor_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
 		{
 			_isSaved = false;
-		}
-
-		private void Save_Click(object sender, RoutedEventArgs e)
-		{
-			if (!Path.IsPathRooted(_path))
-			{
-				SaveAs_Click(sender, e);
-				return;
-			}
-			try
-			{
-				System.IO.File.WriteAllText(_path, Editor.Text, Encoding.UTF8);
-				_isSaved = true;
-			}
-			catch (Exception ex)
-			{
-				FileSystem.ShowErrorMessage(ex.Message);
-			}
 		}
 
 		private void SetNewPath(bool? result, string newPath)
@@ -160,6 +103,11 @@ namespace FileManager
 				_isSaved = true;
 				_path = newPath;
 				Title = Path.GetFileName(newPath) + " - Text Editor";
+				string extension = Path.GetExtension(newPath);
+				if (extension == ".html" || extension == ".htm")
+					HtmlMenu.Visibility = Visibility.Visible;
+				else
+					HtmlMenu.Visibility = Visibility.Collapsed;
 			}
 		}
 
@@ -207,7 +155,7 @@ namespace FileManager
 			Close();
 		}
 
-		private void New_Click(object sender, RoutedEventArgs e)
+		private void NewCommandBinding_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
 		{
 			if (!ConfirmExit())
 				return;
@@ -215,7 +163,7 @@ namespace FileManager
 			SetNewPath(true, "New Document");
 		}
 
-		private void Open_Click(object sender, RoutedEventArgs e)
+		private void OpenCommandBinding_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
 		{
 			if (!ConfirmExit())
 				return;
@@ -236,6 +184,33 @@ namespace FileManager
 			{
 				FileSystem.ShowErrorMessage(ex.Message);
 			}
+		}
+
+		private void SaveCommandBinding_Executed(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+		{
+			if (!Path.IsPathRooted(_path))
+			{
+				SaveAs_Click(sender, e);
+				return;
+			}
+			try
+			{
+				System.IO.File.WriteAllText(_path, Editor.Text, Encoding.UTF8);
+				_isSaved = true;
+			}
+			catch (Exception ex)
+			{
+				FileSystem.ShowErrorMessage(ex.Message);
+			}
+		}
+
+		private void GetImageList_Click(object sender, RoutedEventArgs e)
+		{
+			var images = EditorUtils.GetImagesFromHtml(Editor.Text);
+			if (images.Count == 0)
+				FileSystem.ShowErrorMessage("Не знайдено жодного посилання");
+			else
+				new ImagesFromHtml(images, Path.GetDirectoryName(_path) ?? "").Show();
 		}
 	}
 }
