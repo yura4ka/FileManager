@@ -27,9 +27,9 @@
         </Grid.RowDefinitions>
         <Menu>
             <MenuItem Header="File">
-                <MenuItem Header="New" InputGestureText="Ctrl+N" />
-                <MenuItem Header="Open" InputGestureText="Ctrl+O" />
-                <MenuItem Header="Save" InputGestureText="Ctrl+S" />
+                <MenuItem Header="New" InputGestureText="Ctrl+N" Command="New" />
+                <MenuItem Header="Open" InputGestureText="Ctrl+O" Command="Open" />
+                <MenuItem Header="Save" InputGestureText="Ctrl+S" Command="Save" />
                 <MenuItem Header="Save As...">
                     <MenuItem Header="File" Click="SaveAs_Click" />
                     <MenuItem Header="HTML File" Click="HtmlSave_Click" />
