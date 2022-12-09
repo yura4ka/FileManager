@@ -52,7 +52,7 @@ namespace FileManager
 					var dialog = new FileAlreadyExistsDialog(moveResult.Item?.Name);
 					if (dialog.ShowDialog() != true)
 					{
-						moveResult = MoveController.Cancel();
+						moveResult = _mc.Cancel();
 						continue;
 					}
 					switch (dialog.Result)
