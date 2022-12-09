@@ -22,14 +22,14 @@ namespace FileManager
 		{
 			var builer = new StringBuilder(s);
 			char[] separators = { ' ', '\n', '\r', '\t' };
-			int index = s.IndexOfAny(separators);
-			while (++index != 0 && index < s.Length)
+			int index = SkipToContent(s);
+			builer[index] = builer[index].ToString().ToUpper()[0];
+			index = s.IndexOfAny(separators, index);
+			while (index != -1 && index < s.Length)
 			{
-				if (separators.Any(c => c == s[index]))
-				{
-					index = SkipToContent(s, index) - 1;
-					continue;
-				}
+				index = SkipToContent(s, index + 1);
+				if (index >= s.Length)
+					break;
 				builer[index] = builer[index].ToString().ToUpper()[0];
 				index = s.IndexOfAny(separators, index + 1);
 			}
