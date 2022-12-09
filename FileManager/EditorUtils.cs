@@ -80,10 +80,12 @@ namespace FileManager
 		{
 			var html = new HtmlDocument();
 			html.LoadHtml(s);
-			return html.DocumentNode
-				.SelectNodes("//img")
+			var nodes = html.DocumentNode.SelectNodes("//img");
+			if (nodes == null)
+				return new();
+			return nodes
 				.Select(node => node.Attributes["src"]?.Value ?? "")
-				.Where(src => !string.IsNullOrEmpty(src))
+				.Where(src => !string.IsNullOrWhiteSpace(src))
 				.ToList();
 		}
 
