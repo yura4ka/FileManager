@@ -13,6 +13,16 @@ namespace FileManager
 		private readonly TabController _leftTab;
 		private readonly TabController _rigthTab;
 		private Folder? _currentFolder = null;
+		private Folder? CurrentFolder
+		{
+			get => _currentFolder;
+			set
+			{
+				_currentFolder = value;
+				CreateFileButton.IsEnabled = value != null;
+				CreateFolderButton.IsEnabled = value != null;
+			}
+		}
 
 		private bool HasSelected => _leftTab.HasSelected || _rigthTab.HasSelected;
 		private bool HasBufferItems => fs.HasBufferItems;
@@ -28,21 +38,14 @@ namespace FileManager
 			_rigthTab = new(RightTree, RightList, RightStatus, RightPath);
 		}
 
-		private void SetCurrentFolder(Folder folder)
-		{
-			_currentFolder = folder;
-			CreateFileButton.IsEnabled = _currentFolder != null;
-			CreateFolderButton.IsEnabled = _currentFolder != null;
-		}
-
 		private void SetToolButtons()
 		{
 			foreach (var b in ToolBar.Children.OfType<Button>())
 				b.IsEnabled = HasSelected;
 			PasteButton.IsEnabled = HasBufferItems;
 			OpenInEditorButton.IsEnabled = GetCurrentSelection().OfType<File>().FirstOrDefault() != null;
-			CreateFileButton.IsEnabled = _currentFolder != null;
-			CreateFolderButton.IsEnabled = _currentFolder != null;
+			CreateFileButton.IsEnabled = CurrentFolder != null;
+			CreateFolderButton.IsEnabled = CurrentFolder != null;
 		}
 
 		private void OnTreeItemClick(TabController tab)
@@ -51,7 +54,7 @@ namespace FileManager
 			tab.SetListSourse(selected);
 			tab.SetPath(selected);
 			tab.History.Add(selected);
-			SetCurrentFolder(selected);
+			CurrentFolder = selected;
 		}
 
 		private void LeftTreeItem_Click(object sender, MouseButtonEventArgs e)
@@ -84,7 +87,7 @@ namespace FileManager
 			tab.SetListSourse(folder);
 			tab.History.Add(folder);
 			tab.Path.Items.Add(folder);
-			SetCurrentFolder(folder);
+			CurrentFolder = folder;
 		}
 
 		private void LeftItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -107,7 +110,7 @@ namespace FileManager
 		{
 			tab.SetListSourse(folder);
 			tab.History.Add(folder);
-			SetCurrentFolder(folder);
+			CurrentFolder = folder;
 			var items = tab.Path.Items;
 			int i = items.Count - 1;
 			while (items[i] != folder)
@@ -196,12 +199,12 @@ namespace FileManager
 
 		private void PasteButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (_currentFolder == null)
+			if (CurrentFolder == null)
 				return;
-			if (!fs.MoveFromBuffer(_currentFolder))
+			if (!fs.MoveFromBuffer(CurrentFolder))
 				return;
 			RefreshLists();
-			RefreshTree(_currentFolder);
+			RefreshTree(CurrentFolder);
 			SetToolButtons();
 			if (fs.BufferSourseFile != null)
 				RefreshTree(fs.BufferSourseFile);
@@ -221,8 +224,8 @@ namespace FileManager
 			== MessageBoxResult.Cancel)
 				return;
 			FileSystem.RemoveItems(selection);
-			if (_currentFolder != null)
-				RefreshAll(_currentFolder);
+			if (CurrentFolder != null)
+				RefreshAll(CurrentFolder);
 		}
 
 		private void RenameButton_Click(object sender, RoutedEventArgs e)
@@ -233,12 +236,12 @@ namespace FileManager
 
 		private void BackClick(TabController tab)
 		{
-			SetCurrentFolder(tab.OnBackClick());
+			CurrentFolder = tab.OnBackClick();
 		}
 
 		private void ForwardClick(TabController tab)
 		{
-			SetCurrentFolder(tab.OnForwardClick());
+			CurrentFolder = tab.OnForwardClick();
 		}
 
 		private void LeftBack_Click(object sender, RoutedEventArgs e) => BackClick(_leftTab);
@@ -255,28 +258,28 @@ namespace FileManager
 
 		private void CreateFolderButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (_currentFolder == null)
+			if (CurrentFolder == null)
 				return;
-			var newFolder = FileSystem.CreateDirectory(_currentFolder);
+			var newFolder = FileSystem.CreateDirectory(CurrentFolder);
 			if (newFolder != null)
 				RefreshAll(newFolder);
 		}
 
 		private void CreateFileButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (_currentFolder == null)
+			if (CurrentFolder == null)
 				return;
-			var newFile = FileSystem.CreateFile(_currentFolder);
+			var newFile = FileSystem.CreateFile(CurrentFolder);
 			if (newFile != null)
 				RefreshAll(newFile);
 		}
 
 		private void RefreshButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (_currentFolder == null)
+			if (CurrentFolder == null)
 				return;
-			_currentFolder.TryInitializeChildren();
-			RefreshAll(_currentFolder);
+			CurrentFolder.TryInitializeChildren();
+			RefreshAll(CurrentFolder);
 		}
 	}
 }

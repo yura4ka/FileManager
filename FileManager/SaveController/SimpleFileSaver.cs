@@ -10,9 +10,9 @@ namespace FileManager.SaveController
 		{
 			try
 			{
-				var dialog = new SaveFileDialog 
-				{ 
-					FileName = Path.GetFileName(path), 
+				var dialog = new SaveFileDialog
+				{
+					FileName = Path.GetFileName(path),
 					Filter = "All files (*.*)|*.*",
 					DefaultExt = "txt",
 				};

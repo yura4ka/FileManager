@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:FileManager"
         mc:Ignorable="d"
         Title="FileManager" Height="750" Width="1200">
-    
+
     <Window.Resources>
         <Style TargetType="Button" x:Key="ToolBarItem">
             <Setter Property="IsEnabled" Value="False" />

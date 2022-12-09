@@ -28,7 +28,7 @@ namespace FileManager.Dialogs
 		private void Skip_Click(object sender, RoutedEventArgs e)
 		{
 			Result = DialogResults.Skip;
-			DialogResult = false;
+			DialogResult = true;
 		}
 
 		private void Replace_Click(object sender, RoutedEventArgs e)

@@ -19,7 +19,7 @@ namespace FileManager.Dialogs
 					list.Add(new ImageItem(newPath));
 				else
 					list.Add(new(newPath + (System.IO.File.Exists(newPath) ? "" : " (не знайдено!)")));
-				
+
 			}
 			ListBox.ItemsSource = list;
 		}

@@ -52,7 +52,7 @@ namespace FileManager
 						return new(MoveResult.Results.AlreadyExists, item);
 
 					string newPath = Path.GetFullPath($"{_destination.FullName}/{item.Name}");
-					if (item is Folder f 
+					if (item is Folder f
 						&& (_destination == f || _destination.IsAncestorOf(f)))
 					{
 						return new(MoveResult.Results.SubFolderError, f);
@@ -147,6 +147,12 @@ namespace FileManager
 			return result;
 		}
 
+		public MoveResult Cancel()
+		{
+			End();
+			return new MoveResult(MoveResult.Results.Cancel);
+		}
+
 		private void End()
 		{
 			_bufferIndex = 0;
@@ -165,6 +171,7 @@ namespace FileManager
 			AlreadyExists,
 			SubFolderError,
 			Error,
+			Cancel,
 		}
 
 		public FsItem? Item { get; private set; }

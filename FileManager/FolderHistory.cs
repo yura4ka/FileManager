@@ -57,11 +57,5 @@ namespace FileManager
 			SetButtons();
 			return toBack;
 		}
-
-		public void ClearForward()
-		{
-			_forwardFolders.Clear();
-			SetButtons();
-		}
 	}
 }

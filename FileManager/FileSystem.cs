@@ -50,7 +50,11 @@ namespace FileManager
 				if (moveResult.Result == MoveResult.Results.AlreadyExists)
 				{
 					var dialog = new FileAlreadyExistsDialog(moveResult.Item?.Name);
-					dialog.ShowDialog();
+					if (dialog.ShowDialog() != true)
+					{
+						moveResult = MoveController.Cancel();
+						continue;
+					}
 					switch (dialog.Result)
 					{
 						case FileAlreadyExistsDialog.DialogResults.Skip:
@@ -74,6 +78,8 @@ namespace FileManager
 					ShowErrorMessage($"Помилка! {moveResult.Item?.Name}\n{moveResult.Message}");
 					return false;
 				}
+				else if (moveResult.Result == MoveResult.Results.Cancel)
+					return true;
 			}
 
 			return true;
