@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -90,12 +91,16 @@ namespace FileManager
 		{
 			if (((DataGridRow)sender).Item is Folder folder)
 				OnFolderDoubleClick(_leftTab, folder);
+			else if (((DataGridRow)sender).Item is File file)
+				Process.Start("explorer", "\"" + file.FullName + "\"");
 		}
 
 		private void RightItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
 			if (((DataGridRow)sender).Item is Folder folder)
 				OnFolderDoubleClick(_rigthTab, folder);
+			else if (((DataGridRow)sender).Item is File file)
+				Process.Start("explorer", "\"" + file.FullName + "\"");
 		}
 
 		private void OnPathClick(TabController tab, Folder folder)

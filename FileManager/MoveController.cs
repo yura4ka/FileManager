@@ -52,10 +52,10 @@ namespace FileManager
 						return new(MoveResult.Results.AlreadyExists, item);
 
 					string newPath = Path.GetFullPath($"{_destination.FullName}/{item.Name}");
-					if (item is Folder f && _destination.IsAncestorOf(f))
+					if (item is Folder f 
+						&& (_destination == f || _destination.IsAncestorOf(f)))
 					{
-						End();
-						return new(MoveResult.Results.SubFolderError, _destination);
+						return new(MoveResult.Results.SubFolderError, f);
 					}
 
 					DoAction(item, newPath, replace);

@@ -64,10 +64,14 @@ namespace FileManager
 							break;
 					}
 				}
-				else if (moveResult.Result == MoveResult.Results.SubFolderError
-					|| moveResult.Result == MoveResult.Results.Error)
+				else if (moveResult.Result == MoveResult.Results.SubFolderError)
 				{
-					ShowErrorMessage($"Помилка під час копіювання {moveResult.Item?.Name}\n{moveResult.Message}");
+					ShowErrorMessage($"Помилка! {moveResult.Item?.Name}\n{moveResult.Message}");
+					moveResult = _mc.ContinueSkipOne();
+				}
+				else if (moveResult.Result == MoveResult.Results.Error)
+				{
+					ShowErrorMessage($"Помилка! {moveResult.Item?.Name}\n{moveResult.Message}");
 					return false;
 				}
 			}
