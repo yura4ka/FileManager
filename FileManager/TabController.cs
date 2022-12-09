@@ -28,7 +28,7 @@ namespace FileManager
 
 			Path = pathControll.Children.OfType<ListBox>().First();
 			var panel = pathControll.Children.OfType<StackPanel>().First();
-			PathBack = panel.Children.OfType<Button>().First();
+			PathBack = panel.Children.OfType<Button>().Skip(1).First();
 			PathForward = panel.Children.OfType<Button>().Last();
 
 			History = new FolderHistory(PathBack, PathForward);

@@ -217,7 +217,7 @@ namespace FileManager
 
 		private void MoveHtml_Click(object sender, RoutedEventArgs e)
 		{
-			(var result, string newPath) = new FileSaverCreator()
+			(var result, _) = new FileSaverCreator()
 				.CreateSaver(SaverCreator.SaverTypes.HTML)
 				.SaveFile(_path, Editor.SelectedText);
 			if (result != true)
@@ -231,8 +231,7 @@ namespace FileManager
 			{
 				Description = "Виберіть папку для графічних файлів",
 				UseDescriptionForTitle = true,
-				SelectedPath = _path,
-				ShowNewFolderButton = true,
+				SelectedPath = parent,
 			};
 
 			if (dialog.ShowDialog() != WF.DialogResult.OK)
@@ -241,10 +240,10 @@ namespace FileManager
 			{
 				(string path, bool isPath) = EditorUtils.MakePathAbsoulute(i, parent);
 				if (!isPath || !System.IO.File.Exists(path))
-					return;
+					continue;
 				VB.FileSystem.CopyFile(path,
 					Path.Combine(dialog.SelectedPath, Path.GetFileName(path)),
-					VB.UIOption.OnlyErrorDialogs,
+					VB.UIOption.AllDialogs,
 					VB.UICancelOption.DoNothing);
 			}
 

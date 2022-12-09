@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 namespace FileManager
@@ -200,7 +199,7 @@ namespace FileManager
 			RefreshTree(_currentFolder);
 			SetToolButtons();
 			if (fs.BufferSourseFile != null)
-				RefreshTree(fs.BufferSourseFile, false);
+				RefreshTree(fs.BufferSourseFile);
 		}
 
 		private void RemoveButton_Click(object sender, RoutedEventArgs e)
@@ -265,6 +264,14 @@ namespace FileManager
 			var newFile = FileSystem.CreateFile(_currentFolder);
 			if (newFile != null)
 				RefreshAll(newFile);
+		}
+
+		private void RefreshButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (_currentFolder == null)
+				return;
+			_currentFolder.TryInitializeChildren();
+			RefreshAll(_currentFolder);
 		}
 	}
 }

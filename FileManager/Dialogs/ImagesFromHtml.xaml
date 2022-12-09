@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FileManager.Dialogs"
         mc:Ignorable="d"
-        Title="Images" Height="450" Width="800">
+        Title="Images" Height="800" Width="600">
     <DockPanel Margin="20" LastChildFill="True">
         <TextBlock DockPanel.Dock="Top" FontSize="20" FontWeight="Medium">Графічні файли із file.html</TextBlock>
         <ListBox x:Name="ListBox">

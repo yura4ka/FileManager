@@ -17,6 +17,7 @@
 		<None Remove="Images\move.png" />
 		<None Remove="Images\openInEditor.png" />
 		<None Remove="Images\paste.png" />
+		<None Remove="Images\refresh.png" />
 		<None Remove="Images\remove.png" />
 		<None Remove="Images\rename.png" />
 	</ItemGroup>
@@ -59,6 +60,9 @@
 		</Resource>
 		<Resource Include="Images\paste.png">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Images\refresh.png">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</Resource>
 		<Resource Include="Images\remove.png">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
