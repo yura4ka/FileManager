@@ -187,7 +187,7 @@
 
             <WrapPanel x:Name="LeftPath" Grid.Column="0" Grid.ColumnSpan="3">
                 <StackPanel Orientation="Horizontal">
-                    <Button Style="{StaticResource PathButton}" Click="RefreshButton_Click">
+                    <Button Style="{StaticResource PathButton}" Click="RefreshLeftButton_Click">
                         <Image Source="Images/refresh.png" Width="20" Height="20" />
                     </Button>
                     <Button Style="{StaticResource ResourceKey=PathButton}" IsEnabled="False" Click="LeftBack_Click">
@@ -277,7 +277,7 @@
 
             <WrapPanel x:Name="RightPath" Grid.Column="4" Grid.ColumnSpan="3">
                 <StackPanel Orientation="Horizontal">
-                    <Button Style="{StaticResource PathButton}" Click="RefreshButton_Click">
+                    <Button Style="{StaticResource PathButton}" Click="RefreshRightButton_Click">
                         <Image Source="Images/refresh.png" Width="20" Height="20" />
                     </Button>
                     <Button Style="{StaticResource ResourceKey=PathButton}" IsEnabled="False" Click="RightBack_Click">

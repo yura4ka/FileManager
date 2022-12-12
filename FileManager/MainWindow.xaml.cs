@@ -274,12 +274,28 @@ namespace FileManager
 				RefreshAll(newFile);
 		}
 
-		private void RefreshButton_Click(object sender, RoutedEventArgs e)
+		private void Refresh()
 		{
 			if (CurrentFolder == null)
 				return;
 			CurrentFolder.TryInitializeChildren();
 			RefreshAll(CurrentFolder);
+		}
+
+		private void RefreshLeftButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (CurrentFolder == null)
+				return;
+			Refresh();
+			_leftTab.SetListSourse(CurrentFolder);
+		}
+
+		private void RefreshRightButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (CurrentFolder == null)
+				return;
+			Refresh();
+			_rigthTab.SetListSourse(CurrentFolder);
 		}
 	}
 }
